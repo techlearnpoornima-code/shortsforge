@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShortsForge AI — Setup Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --bg:        #0C0C14;
+    --surface:   #13131F;
+    --card:      #1A1A2E;
+    --border:    #2A2A45;
+    --accent:    #FF4B6E;
+    --gold:      #FFD166;
+    --green:     #06D6A0;
+    --blue:      #4CC9F0;
+    --purple:    #B44BFF;
+    --text:      #E8E8F5;
+    --muted:     #6B6B8F;
+    --code-bg:   #0A0A12;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar nav ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  nav {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .nav-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .nav-logo .icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .nav-logo .name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--text);
+  }
+  .nav-logo .sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    padding: 8px 24px 4px;
+  }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  nav a:hover { color: var(--text); background: var(--card); }
+  nav a.active { color: var(--accent); border-left-color: var(--accent); background: var(--card); }
+  nav a .step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  nav a.active .step-num { background: var(--accent); color: white; }
+
+  /* ── Main content ── */
+  main {
+    flex: 1;
+    padding: 48px 60px;
+    max-width: 900px;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    margin-bottom: 52px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 38px;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+  .page-header h1 span { color: var(--accent); }
+  .page-header p { color: var(--muted); font-size: 16px; max-width: 560px; }
+
+  /* ── Architecture diagram ── */
+  .arch {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 32px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .arch .node { color: var(--gold); font-weight: 600; }
+  .arch .arrow { color: var(--muted); }
+  .arch .label { color: var(--green); }
+  .arch .parallel { color: var(--blue); }
+
+  /* ── Step sections ── */
+  .step-section {
+    margin-bottom: 52px;
+    scroll-margin-top: 24px;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .step-badge {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .step-badge.red    { background: #FF4B6E22; color: var(--accent); border: 1px solid #FF4B6E44; }
+  .step-badge.gold   { background: #FFD16622; color: var(--gold);   border: 1px solid #FFD16644; }
+  .step-badge.green  { background: #06D6A022; color: var(--green);  border: 1px solid #06D6A044; }
+  .step-badge.blue   { background: #4CC9F022; color: var(--blue);   border: 1px solid #4CC9F044; }
+  .step-badge.purple { background: #B44BFF22; color: var(--purple); border: 1px solid #B44BFF44; }
+  .step-badge.orange { background: #FF9F4B22; color: #FF9F4B;       border: 1px solid #FF9F4B44; }
+
+  .step-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.3px;
+  }
+
+  p { margin-bottom: 12px; color: var(--muted); }
+  p strong { color: var(--text); }
+
+  /* ── Code blocks ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .code-header .dots { display: flex; gap: 5px; }
+  .code-header .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-header .dot.r { background: #FF5F56; }
+  .code-header .dot.y { background: #FFBD2E; }
+  .code-header .dot.g { background: #27C93F; }
+
+  pre {
+    padding: 20px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    overflow-x: auto;
+    color: #C8C8E8;
+  }
+  .cm  { color: #5C6370; font-style: italic; }   /* comment */
+  .kw  { color: #C678DD; }                        /* keyword */
+  .st  { color: #98C379; }                        /* string */
+  .fn  { color: #61AFEF; }                        /* function/cmd */
+  .vr  { color: var(--gold); }                    /* variable */
+  .fl  { color: #E5C07B; }                        /* flag */
+  .hl  { background: #FF4B6E18; border-radius: 3px; padding: 0 3px; } /* highlight */
+
+  /* ── Info / warning boxes ── */
+  .info-box {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    font-size: 13.5px;
+  }
+  .info-box.tip    { background: #06D6A011; border: 1px solid #06D6A033; }
+  .info-box.warn   { background: #FFD16611; border: 1px solid #FFD16633; }
+  .info-box.danger { background: #FF4B6E11; border: 1px solid #FF4B6E33; }
+  .info-box .icon  { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .info-box .body  { color: var(--text); line-height: 1.6; }
+  .info-box .body strong { color: var(--text); }
+
+  /* ── File tree ── */
+  .file-tree {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+  }
+  .file-tree .dir  { color: var(--blue); }
+  .file-tree .file { color: var(--text); }
+  .file-tree .new  { color: var(--green); }
+  .file-tree .note { color: var(--muted); font-size: 11px; }
+
+  /* ── Checklist ── */
+  .checklist { list-style: none; margin: 16px 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .check {
+    width: 20px; height: 20px;
+    border-radius: 5px;
+    background: var(--green);
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── Cost table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+  th {
+    background: var(--surface);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  .cost-free { color: var(--green); font-weight: 600; }
+  .cost-low  { color: var(--gold); font-weight: 600; }
+  .cost-total { background: var(--card); font-weight: 700; }
+
+  /* ── Quick commands ── */
+  .quick-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .quick-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .quick-card .label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .quick-card code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    display: block;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ── Sidebar Navigation ── -->
+<nav>
+  <div class="nav-logo">
+    <span class="icon">🎬</span>
+    <div class="name">ShortsForge AI</div>
+    <div class="sub">LangGraph Edition v2.0</div>
+  </div>
+
+  <div class="nav-section-label">Setup Guide</div>
+  <a href="#architecture"><span class="step-num">0</span> Architecture</a>
+  <a href="#prerequisites"><span class="step-num">1</span> Prerequisites</a>
+  <a href="#project-structure"><span class="step-num">2</span> Project Structure</a>
+  <a href="#local-setup"><span class="step-num">3</span> Local Setup</a>
+  <a href="#youtube-oauth"><span class="step-num">4</span> YouTube OAuth</a>
+  <a href="#docker-local"><span class="step-num">5</span> Docker (Local)</a>
+
+  <div class="nav-section-label" style="margin-top:12px">GCP Deployment</div>
+  <a href="#gcp-setup"><span class="step-num">6</span> GCP Project Setup</a>
+  <a href="#secrets"><span class="step-num">7</span> Secret Manager</a>
+  <a href="#deploy"><span class="step-num">8</span> Deploy Cloud Run Job</a>
+  <a href="#scheduler"><span class="step-num">9</span> Cloud Scheduler</a>
+  <a href="#monitoring"><span class="step-num">10</span> Monitoring & Logs</a>
+  <a href="#commands"><span class="step-num">★</span> Quick Commands</a>
+</nav>
+
+<!-- ── Main Content ── -->
+<main>
+
+  <div class="page-header">
+    <div class="badge">📖 Setup Guide</div>
+    <h1>Deploy <span>ShortsForge AI</span><br>to Google Cloud</h1>
+    <p>Full walkthrough: local Docker setup → production Cloud Run Job with Cloud Scheduler, Secret Manager, and automated YouTube posting.</p>
+  </div>
+
+
+  <!-- ── 0. Architecture ── -->
+  <div class="step-section" id="architecture">
+    <div class="step-header">
+      <div class="step-badge red">0</div>
+      <h2>How It All Fits Together</h2>
+    </div>
+    <div class="arch">
+<span class="label">Cloud Scheduler</span> (cron 11:00 + 19:00 IST)
+      <span class="arrow">│
+      │ HTTP POST triggers
+      ▼</span>
+<span class="node">Cloud Run Job</span>  (your Docker container, runs &amp; exits)
+      <span class="arrow">│
+      ├──────────────────────────────────────────────────</span>
+      <span class="arrow">│</span>  <span class="node">LangGraph Pipeline</span>
+      <span class="arrow">│</span>
+      <span class="arrow">│  [generate_content]</span>  <span class="label">← Claude claude-opus-4-5</span>
+      <span class="arrow">│       │ pass compliance</span>
+      <span class="arrow">│  ┌────┴────┐</span>  <span class="parallel">← PARALLEL (Send API)</span>
+      <span class="arrow">│  ▼         ▼</span>
+      <span class="parallel">│  [generate_video]   [build_youtube_meta]</span>
+      <span class="arrow">│  │               │</span>
+      <span class="arrow">│  └──────┬──────────┘</span>
+      <span class="arrow">│         ▼</span>
+      <span class="arrow">│  [upload_youtube]</span>  <span class="label">← YouTube Data API v3</span>
+      <span class="arrow">│</span>
+      <span class="arrow">└──</span> <span class="label">Secrets</span> from Secret Manager
+          <span class="label">Logs</span>   to  Cloud Logging
+    </div>
+  </div>
+
+
+  <!-- ── 1. Prerequisites ── -->
+  <div class="step-section" id="prerequisites">
+    <div class="step-header">
+      <div class="step-badge gold">1</div>
+      <h2>Prerequisites</h2>
+    </div>
+    <p>Make sure you have these before starting:</p>
+    <ul class="checklist">
+      <li><div class="check">✓</div><div><strong>Python 3.12+</strong> — <code style="font-family:monospace;color:var(--green)">python --version</code></div></li>
+      <li><div class="check">✓</div><div><strong>Docker Desktop</strong> — <a href="https://docs.docker.com/desktop/" style="color:var(--blue)">download here</a>. Required for local container testing.</div></li>
+      <li><div class="check">✓</div><div><strong>Google Cloud CLI</strong> — <a href="https://cloud.google.com/sdk/docs/install" style="color:var(--blue)">install guide</a>. Run <code style="font-family:monospace;color:var(--green)">gcloud auth login</code> after installing.</div></li>
+      <li><div class="check">✓</div><div><strong>Anthropic API Key</strong> — <a href="https://console.anthropic.com" style="color:var(--blue)">console.anthropic.com</a> → API Keys</div></li>
+      <li><div class="check">✓</div><div><strong>Google AI Studio Key</strong> — <a href="https://aistudio.google.com" style="color:var(--blue)">aistudio.google.com</a> → Get API Key (for Veo 3)</div></li>
+      <li><div class="check">✓</div><div><strong>GCP Project</strong> with billing enabled — <a href="https://console.cloud.google.com" style="color:var(--blue)">console.cloud.google.com</a></div></li>
+      <li><div class="check">✓</div><div><strong>YouTube Channel</strong> — the channel you want to post Shorts to</div></li>
+    </ul>
+  </div>
+
+
+  <!-- ── 2. Project Structure ── -->
+  <div class="step-section" id="project-structure">
+    <div class="step-header">
+      <div class="step-badge green">2</div>
+      <h2>Project Structure</h2>
+    </div>
+    <div class="file-tree">
+<span class="dir">shortsforge_langgraph/</span>
+├── <span class="new">Dockerfile</span>           <span class="note">← Production image (Cloud Run)</span>
+├── <span class="new">Dockerfile.dev</span>       <span class="note">← Local dev image (lighter)</span>
+├── <span class="new">docker-compose.yml</span>   <span class="note">← Local dev orchestration</span>
+├── <span class="new">entrypoint.sh</span>        <span class="note">← Fetches secrets at container start</span>
+├── <span class="new">deploy_gcp.sh</span>        <span class="note">← One-command GCP deployment</span>
+├── <span class="new">.dockerignore</span>        <span class="note">← Excludes secrets from Docker build</span>
+├── <span class="new">.gitignore</span>           <span class="note">← Never commit .env or tokens</span>
+├── <span class="file">.env.example</span>         <span class="note">← Copy to .env and fill in keys</span>
+├── <span class="file">requirements.txt</span>
+├── <span class="file">main.py</span>              <span class="note">← Entry point + scheduler</span>
+└── <span class="dir">graph/</span>
+    ├── <span class="file">state.py</span>         <span class="note">← Shared TypedDict state</span>
+    ├── <span class="file">nodes.py</span>         <span class="note">← 6 agent node functions</span>
+    ├── <span class="file">edges.py</span>         <span class="note">← Conditional routing logic</span>
+    └── <span class="file">pipeline.py</span>      <span class="note">← LangGraph graph assembly</span>
+    </div>
+    <div class="info-box tip">
+      <div class="icon">💡</div>
+      <div class="body"><strong>New files</strong> (highlighted in green above) were added to the existing project from the previous step. Everything else was already there.</div>
+    </div>
+  </div>
+
+
+  <!-- ── 3. Local Setup ── -->
+  <div class="step-section" id="local-setup">
+    <div class="step-header">
+      <div class="step-badge blue">3</div>
+      <h2>Local Setup</h2>
+    </div>
+
+    <p><strong>Clone/download the project, then:</strong></p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="cm"># 1. Enter the project folder</span>
+<span class="fn">cd</span> shortsforge_langgraph
+
+<span class="cm"># 2. Create your .env file</span>
+<span class="fn">cp</span> .env.example .env
+
+<span class="cm"># 3. Fill in your API keys</span>
+<span class="fn">nano</span> .env   <span class="cm"># or open in your editor</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>.env</div>
+      <pre><span class="vr">ANTHROPIC_API_KEY</span>=<span class="st">sk-ant-xxxxxxxxxxxxxxxxx</span>
+<span class="vr">GOOGLE_API_KEY</span>=<span class="st">AIzaSyxxxxxxxxxxxxxxxxx</span>
+<span class="vr">YOUTUBE_CLIENT_SECRETS_FILE</span>=<span class="st">client_secrets.json</span>
+<span class="vr">DRY_RUN</span>=<span class="st">false</span>
+<span class="vr">POST_TIMES</span>=<span class="st">11:00,19:00</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="cm"># 4. Install Python dependencies</span>
+<span class="fn">pip</span> install <span class="fl">-r</span> requirements.txt
+
+<span class="cm"># 5. Test pipeline locally (dry run — no YouTube upload)</span>
+<span class="fn">python</span> main.py <span class="fl">--dry-run</span>
+
+<span class="cm"># 6. Visualise the LangGraph structure</span>
+<span class="fn">python</span> main.py <span class="fl">--visualise</span></pre>
+    </div>
+  </div>
+
+
+  <!-- ── 4. YouTube OAuth ── -->
+  <div class="step-section" id="youtube-oauth">
+    <div class="step-header">
+      <div class="step-badge purple">4</div>
+      <h2>YouTube OAuth2 (One-Time)</h2>
+    </div>
+    <p>YouTube requires OAuth2. You authenticate <strong>once locally</strong> — the token is saved and reused (including in the cloud).</p>
+
+    <p><strong>Step 1</strong> — Get OAuth2 credentials from Google Cloud Console:</p>
+    <ul style="margin: 8px 0 16px 24px; color: var(--muted); line-height: 2;">
+      <li>Go to <a href="https://console.cloud.google.com/apis/credentials" style="color:var(--blue)">console.cloud.google.com/apis/credentials</a></li>
+      <li>Click <strong style="color:var(--text)">+ Create Credentials → OAuth client ID</strong></li>
+      <li>Application type: <strong style="color:var(--text)">Desktop app</strong></li>
+      <li>Download the JSON → save as <code style="font-family:monospace;color:var(--green)">client_secrets.json</code> in the project folder</li>
+      <li>Go to <strong style="color:var(--text)">OAuth consent screen</strong> → add your YouTube email as a <strong style="color:var(--text)">Test User</strong></li>
+      <li>Enable <strong style="color:var(--text)">YouTube Data API v3</strong> in APIs & Services → Enable APIs</li>
+    </ul>
+
+    <p><strong>Step 2</strong> — Run auth flow (opens browser once):</p>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="cm"># This opens your browser to authorise YouTube access</span>
+<span class="cm"># Creates youtube_token.pickle (keep this safe!)</span>
+<span class="fn">python</span> main.py <span class="fl">--dry-run</span></pre>
+    </div>
+
+    <div class="info-box warn">
+      <div class="icon">⚠️</div>
+      <div class="body"><strong>Token expiry:</strong> YouTube OAuth tokens last ~6 months. When expired, just run <code style="font-family:monospace">python main.py --dry-run</code> locally again and re-upload the token to Secret Manager.</div>
+    </div>
+  </div>
+
+
+  <!-- ── 5. Docker Local ── -->
+  <div class="step-section" id="docker-local">
+    <div class="step-header">
+      <div class="step-badge orange">5</div>
+      <h2>Run with Docker (Local)</h2>
+    </div>
+    <p>Before deploying to GCP, test that everything works inside Docker.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash — Docker Compose</div>
+      <pre><span class="cm"># Build and run a single dry-run</span>
+<span class="fn">docker</span> compose up
+
+<span class="cm"># Run with a theme hint</span>
+<span class="fn">docker</span> compose run pipeline <span class="fn">python</span> main.py <span class="fl">--theme</span> <span class="st">"gym equipment"</span> <span class="fl">--dry-run</span>
+
+<span class="cm"># Generate 3 videos in sequence</span>
+<span class="fn">docker</span> compose run pipeline <span class="fn">python</span> main.py <span class="fl">--count</span> 3 <span class="fl">--dry-run</span>
+
+<span class="cm"># Print the LangGraph ASCII diagram</span>
+<span class="fn">docker</span> compose run pipeline <span class="fn">python</span> main.py <span class="fl">--visualise</span>
+
+<span class="cm"># Run the scheduler (posts at 11:00 + 19:00)</span>
+<span class="fn">docker</span> compose <span class="fl">--profile</span> scheduled up scheduler</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash — Build image manually</div>
+      <pre><span class="cm"># Build the production image</span>
+<span class="fn">docker</span> build <span class="fl">-t</span> shortsforge:latest .
+
+<span class="cm"># Run it (passing .env as env-file)</span>
+<span class="fn">docker</span> run <span class="fl">--env-file</span> .env \
+  <span class="fl">-v</span> $(pwd)/output:/app/output \
+  <span class="fl">-v</span> $(pwd)/youtube_token.pickle:/app/youtube_token.pickle \
+  <span class="fl">-v</span> $(pwd)/client_secrets.json:/app/client_secrets.json \
+  shortsforge:latest</pre>
+    </div>
+
+    <div class="info-box tip">
+      <div class="icon">✅</div>
+      <div class="body"><strong>Check output/</strong> — generated videos appear in <code style="font-family:monospace">./output/videos/</code> and metadata JSON in <code style="font-family:monospace">./output/metadata/</code> on your host machine (mounted via volume).</div>
+    </div>
+  </div>
+
+
+  <!-- ── 6. GCP Setup ── -->
+  <div class="step-section" id="gcp-setup">
+    <div class="step-header">
+      <div class="step-badge red">6</div>
+      <h2>GCP Project Setup</h2>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="cm"># Login and set your project</span>
+<span class="fn">gcloud</span> auth login
+<span class="fn">gcloud</span> config set project <span class="vr">YOUR_PROJECT_ID</span>
+
+<span class="cm"># Enable all required APIs in one command</span>
+<span class="fn">gcloud</span> services enable \
+  run.googleapis.com \
+  cloudbuild.googleapis.com \
+  cloudscheduler.googleapis.com \
+  secretmanager.googleapis.com \
+  artifactregistry.googleapis.com</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash — Create service account</div>
+      <pre><span class="vr">PROJECT_ID</span>=$(gcloud config get-value project)
+
+<span class="cm"># Create the service account</span>
+<span class="fn">gcloud</span> iam service-accounts create shortsforge-sa \
+  <span class="fl">--display-name</span>=<span class="st">"ShortsForge Service Account"</span>
+
+<span class="vr">SA</span>=<span class="st">"shortsforge-sa@${PROJECT_ID}.iam.gserviceaccount.com"</span>
+
+<span class="cm"># Grant Cloud Run invoker (needed for Scheduler to trigger the job)</span>
+<span class="fn">gcloud</span> projects add-iam-policy-binding <span class="vr">$PROJECT_ID</span> \
+  <span class="fl">--member</span>=<span class="st">"serviceAccount:${SA}"</span> \
+  <span class="fl">--role</span>=<span class="st">"roles/run.invoker"</span></pre>
+    </div>
+  </div>
+
+
+  <!-- ── 7. Secret Manager ── -->
+  <div class="step-section" id="secrets">
+    <div class="step-header">
+      <div class="step-badge gold">7</div>
+      <h2>Upload Secrets to Secret Manager</h2>
+    </div>
+    <p><strong>Never put API keys in your Docker image.</strong> Use Secret Manager — the container fetches them at runtime via <code style="font-family:monospace">entrypoint.sh</code>.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="vr">SA</span>=<span class="st">"shortsforge-sa@${PROJECT_ID}.iam.gserviceaccount.com"</span>
+
+<span class="cm"># Upload API key secrets</span>
+<span class="fn">echo</span> -n <span class="st">"sk-ant-xxxxx"</span> | <span class="fn">gcloud</span> secrets create ANTHROPIC_API_KEY \
+  <span class="fl">--data-file</span>=- <span class="fl">--replication-policy</span>=automatic
+
+<span class="fn">echo</span> -n <span class="st">"AIzaSyxxxxx"</span> | <span class="fn">gcloud</span> secrets create GOOGLE_API_KEY \
+  <span class="fl">--data-file</span>=- <span class="fl">--replication-policy</span>=automatic
+
+<span class="cm"># Upload credential files</span>
+<span class="fn">gcloud</span> secrets create YOUTUBE_CLIENT_SECRETS \
+  <span class="fl">--data-file</span>=client_secrets.json <span class="fl">--replication-policy</span>=automatic
+
+<span class="fn">gcloud</span> secrets create YOUTUBE_TOKEN \
+  <span class="fl">--data-file</span>=youtube_token.pickle <span class="fl">--replication-policy</span>=automatic
+
+<span class="cm"># Grant the service account access to all secrets</span>
+<span class="kw">for</span> SECRET <span class="kw">in</span> ANTHROPIC_API_KEY GOOGLE_API_KEY YOUTUBE_CLIENT_SECRETS YOUTUBE_TOKEN; <span class="kw">do</span>
+  <span class="fn">gcloud</span> secrets add-iam-policy-binding <span class="vr">$SECRET</span> \
+    <span class="fl">--member</span>=<span class="st">"serviceAccount:${SA}"</span> \
+    <span class="fl">--role</span>=<span class="st">"roles/secretmanager.secretAccessor"</span>
+<span class="kw">done</span></pre>
+    </div>
+
+    <div class="info-box tip">
+      <div class="icon">🔄</div>
+      <div class="body"><strong>To update a secret later</strong> (e.g. refresh YouTube token): <br><code style="font-family:monospace">gcloud secrets versions add YOUTUBE_TOKEN --data-file=youtube_token.pickle</code></div>
+    </div>
+  </div>
+
+
+  <!-- ── 8. Deploy ── -->
+  <div class="step-section" id="deploy">
+    <div class="step-header">
+      <div class="step-badge green">8</div>
+      <h2>Deploy Cloud Run Job</h2>
+    </div>
+    <p>You can deploy with a single command (it builds the Docker image automatically via Cloud Build) — or use the automated script.</p>
+
+    <p><strong>Option A — One command:</strong></p>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="fn">gcloud</span> run jobs deploy shortsforge \
+  <span class="fl">--source</span> . \
+  <span class="fl">--region</span> asia-south1 \         <span class="cm"># Mumbai — closest to Bengaluru</span>
+  <span class="fl">--memory</span> 2Gi \
+  <span class="fl">--cpu</span> 2 \
+  <span class="fl">--task-timeout</span> 3600 \          <span class="cm"># 1 hour max (Veo takes ~5 min)</span>
+  <span class="fl">--max-retries</span> 1 \
+  <span class="fl">--service-account</span> <span class="st">"shortsforge-sa@${PROJECT_ID}.iam.gserviceaccount.com"</span> \
+  <span class="fl">--set-env-vars</span> <span class="st">"DRY_RUN=false,VIDEO_COUNT=1"</span></pre>
+    </div>
+
+    <p><strong>Option B — Automated deploy script (does everything):</strong></p>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="cm"># Handles: APIs, service account, secrets, job deploy, scheduler</span>
+<span class="fn">chmod</span> +x deploy_gcp.sh
+<span class="fn">./deploy_gcp.sh</span></pre>
+    </div>
+
+    <p><strong>Test the job immediately (without waiting for schedule):</strong></p>
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="fn">gcloud</span> run jobs execute shortsforge <span class="fl">--region</span> asia-south1
+
+<span class="cm"># Watch live logs in real time</span>
+<span class="fn">gcloud</span> run jobs executions logs tail shortsforge <span class="fl">--region</span> asia-south1</pre>
+    </div>
+  </div>
+
+
+  <!-- ── 9. Scheduler ── -->
+  <div class="step-section" id="scheduler">
+    <div class="step-header">
+      <div class="step-badge blue">9</div>
+      <h2>Cloud Scheduler (11AM + 7PM IST)</h2>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>bash</div>
+      <pre><span class="vr">JOB_URI</span>=<span class="st">"https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/shortsforge:run"</span>
+<span class="vr">SA</span>=<span class="st">"shortsforge-sa@${PROJECT_ID}.iam.gserviceaccount.com"</span>
+
+<span class="cm"># 11:00 AM IST (05:30 UTC)</span>
+<span class="fn">gcloud</span> scheduler jobs create http shortsforge-morning \
+  <span class="fl">--location</span> asia-south1 \
+  <span class="fl">--schedule</span> <span class="st">"30 5 * * *"</span> \
+  <span class="fl">--time-zone</span> <span class="st">"Asia/Kolkata"</span> \
+  <span class="fl">--uri</span> <span class="vr">$JOB_URI</span> \
+  <span class="fl">--http-method</span> POST \
+  <span class="fl">--oauth-service-account-email</span> <span class="vr">$SA</span>
+
+<span class="cm"># 7:00 PM IST (13:30 UTC)</span>
+<span class="fn">gcloud</span> scheduler jobs create http shortsforge-evening \
+  <span class="fl">--location</span> asia-south1 \
+  <span class="fl">--schedule</span> <span class="st">"30 13 * * *"</span> \
+  <span class="fl">--time-zone</span> <span class="st">"Asia/Kolkata"</span> \
+  <span class="fl">--uri</span> <span class="vr">$JOB_URI</span> \
+  <span class="fl">--http-method</span> POST \
+  <span class="fl">--oauth-service-account-email</span> <span class="vr">$SA</span>
+
+<span class="cm"># Trigger a job immediately (for testing)</span>
+<span class="fn">gcloud</span> scheduler jobs run shortsforge-morning <span class="fl">--location</span> asia-south1</pre>
+    </div>
+  </div>
+
+
+  <!-- ── 10. Monitoring ── -->
+  <div class="step-section" id="monitoring">
+    <div class="step-header">
+      <div class="step-badge purple">10</div>
+      <h2>Monitoring &amp; Logs</h2>
+    </div>
+
+    <div class="quick-grid">
+      <div class="quick-card">
+        <div class="label">Cloud Run Console</div>
+        <code>console.cloud.google.com/run/jobs</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">Scheduler Console</div>
+        <code>console.cloud.google.com/cloudscheduler</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">Live Logs (CLI)</div>
+        <code>gcloud run jobs executions logs tail shortsforge --region asia-south1</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">List Executions</div>
+        <code>gcloud run jobs executions list --job shortsforge --region asia-south1</code>
+      </div>
+    </div>
+
+    <p style="margin-top:20px"><strong>Monthly Cost Estimate:</strong></p>
+    <table>
+      <thead>
+        <tr><th>Service</th><th>Usage</th><th>Est. Cost</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cloud Run Jobs</td><td>~60 runs/month × 10min × 2GB</td><td class="cost-low">~$3–5</td></tr>
+        <tr><td>Cloud Scheduler</td><td>2 jobs (3 free/month)</td><td class="cost-free">Free</td></tr>
+        <tr><td>Secret Manager</td><td>4 secrets × access calls</td><td class="cost-free">~$0.25</td></tr>
+        <tr><td>Cloud Build</td><td>First deploy only (image cached after)</td><td class="cost-free">Free tier</td></tr>
+        <tr><td>Artifact Registry</td><td>Docker image storage ~500MB</td><td class="cost-free">~$0.05</td></tr>
+        <tr class="cost-total"><td><strong>GCP Total</strong></td><td></td><td class="cost-low"><strong>~$4–6/month</strong></td></tr>
+        <tr><td>Anthropic (Claude)</td><td>~60 calls/month</td><td class="cost-low">~$2–5</td></tr>
+        <tr><td>Google Veo 3</td><td>~60 videos/month</td><td class="cost-low">Per Veo pricing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ── Quick Commands ── -->
+  <div class="step-section" id="commands">
+    <div class="step-header">
+      <div class="step-badge orange">★</div>
+      <h2>Quick Command Reference</h2>
+    </div>
+
+    <div class="quick-grid">
+      <div class="quick-card">
+        <div class="label">🧪 Local dry-run</div>
+        <code>python main.py --dry-run</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">🐳 Docker dry-run</div>
+        <code>docker compose up</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">🚀 Full GCP deploy</div>
+        <code>./deploy_gcp.sh</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">▶ Trigger job now</div>
+        <code>gcloud run jobs execute shortsforge --region asia-south1</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">📋 Live logs</div>
+        <code>gcloud run jobs executions logs tail shortsforge --region asia-south1</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">🔄 Redeploy after changes</div>
+        <code>gcloud run jobs deploy shortsforge --source . --region asia-south1</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">🔐 Refresh YouTube token</div>
+        <code>python main.py --dry-run<br>gcloud secrets versions add YOUTUBE_TOKEN --data-file=youtube_token.pickle</code>
+      </div>
+      <div class="quick-card">
+        <div class="label">⏸ Pause scheduler</div>
+        <code>gcloud scheduler jobs pause shortsforge-morning --location asia-south1</code>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('.step-section');
+  const links = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

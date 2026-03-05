@@ -1,0 +1,62 @@
+# ─────────────────────────────────────────────────────────────
+#  ShortsForge AI — Docker Compose (Local Development)
+#  Usage:
+#    docker compose up              # dry-run once
+#    docker compose run pipeline python main.py --theme "gym food"
+#    docker compose run pipeline python main.py --visualise
+#    docker compose run pipeline python main.py --count 3 --dry-run
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: shortsforge_pipeline
+
+    # Load all env vars from your .env file
+    env_file:
+      - .env
+
+    # Mount output folder so generated videos/metadata appear on your host
+    volumes:
+      - ./output:/app/output
+
+      # Mount YouTube token file (created by running auth locally first)
+      # Comment this out if you haven't run auth yet
+      - ./youtube_token.pickle:/app/youtube_token.pickle:ro
+
+      # Mount OAuth client secrets
+      - ./client_secrets.json:/app/client_secrets.json:ro
+
+    # Override default CMD for interactive runs
+    command: ["python", "main.py", "--dry-run"]
+
+    # Restart policy — "no" for batch jobs (don't auto-restart)
+    restart: "no"
+
+    # Resource limits (mirrors Cloud Run Job config)
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  # Optional: run the pipeline on a schedule locally
+  # Uses the same pipeline service but with --schedule flag
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: shortsforge_scheduler
+    env_file:
+      - .env
+    volumes:
+      - ./output:/app/output
+      - ./youtube_token.pickle:/app/youtube_token.pickle:ro
+      - ./client_secrets.json:/app/client_secrets.json:ro
+    command: ["python", "main.py", "--schedule"]
+    restart: unless-stopped
+    profiles:
+      # Only starts when you run: docker compose --profile scheduled up
+      - scheduled

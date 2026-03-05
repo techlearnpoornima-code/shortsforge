@@ -1,0 +1,20 @@
+# ShortsForge AI v2 — Gemini Edition
+# Single Google API key covers: Gemini 2.0 Flash + Veo 3
+
+# ── Core LangGraph ──────────────────────────────────────────
+langgraph>=0.2.0
+langchain-core>=0.2.0
+
+# ── Google AI (Gemini 2.0 Flash + Veo 3) ───────────────────
+google-genai>=0.8.0
+
+# ── Google Auth + YouTube Data API ─────────────────────────
+google-auth>=2.0.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.1.0
+google-api-python-client>=2.0.0
+
+# ── Utilities ───────────────────────────────────────────────
+python-dotenv>=1.0.0
+schedule>=1.2.0
+requests>=2.31.0

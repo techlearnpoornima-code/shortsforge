@@ -1,0 +1,27 @@
+[project]
+name = "shortsforge"
+version = "0.1.0"
+description = "ShortsForge AI: Gemini-powered YouTube Shorts generator with LangGraph"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "langgraph>=0.2.0",
+    "langchain-core>=0.2.0",
+    "google-genai>=0.8.0",
+    "google-auth>=2.0.0",
+    "google-auth-oauthlib>=1.0.0",
+    "google-auth-httplib2>=0.1.0",
+    "google-api-python-client>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "schedule>=1.2.0",
+    "requests>=2.31.0",
+    "dotenv>=0.9.9",
+    "google-generativeai>=0.8.6",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
+
+
